@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>ICT Challenge – Tally, Pictograms & Charts</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#eaf6ff;--card:#fff;--ink:#17324d;--pri:#2f80ed;--ok:#27ae60;--no:#eb5757;--acc:#ffb703;--soft:#dbeafe;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10243a;--card:#1b3652;--ink:#f1f7ff;--soft:#24476b}}
+:root[data-theme="dark"]{--bg:#10243a;--card:#1b3652;--ink:#f1f7ff;--soft:#24476b}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Comic Sans MS","Trebuchet MS",system-ui,sans-serif;font-size:clamp(18px,2.4vw,26px);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:12px}
+.box{background:var(--card);border-radius:28px;padding:clamp(16px,3vw,36px);width:100%;max-width:900px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.12)}
+h1{margin:.2em 0;font-size:1.9em;color:var(--pri)}h2{margin:.3em 0}.small{font-size:.7em;letter-spacing:.15em;font-weight:bold}
+.big{font-size:3.2em;line-height:1.1}
+input{font:inherit;padding:.5em 1em;border-radius:16px;border:3px solid var(--pri);width:min(100%,420px);text-align:center;background:var(--bg);color:var(--ink)}
+button{font:inherit;cursor:pointer;border:0;border-radius:20px;padding:.6em 1.2em;margin:.35em;background:var(--pri);color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+button:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.go{background:var(--ok);font-size:1.3em}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+.opts button{background:var(--soft);color:var(--ink);margin:0}
+.opts button.right{background:var(--ok);color:#fff}.opts button.wrong{background:var(--no);color:#fff}
+.bar{display:flex;justify-content:space-between;font-weight:bold;font-size:.8em;margin-bottom:8px}
+.prog{height:14px;background:var(--soft);border-radius:9px;overflow:hidden;margin-bottom:12px}.prog i{display:block;height:100%;background:var(--acc);transition:width .4s}
+.vis{background:var(--bg);border-radius:18px;padding:10px;margin:10px 0;display:inline-block;min-width:60%}
+.vis td{padding:2px 10px;text-align:left}
+.fb{min-height:2.6em;margin-top:10px;font-weight:bold}
+.story{background:var(--soft);border-radius:16px;padding:10px 16px}
+.stars{font-size:2.4em}
+</style></head><body>
+<div class="box" id="app"></div>
+<script>
+const R=["Round 1 – Warm-Up 🔥","Round 2 – Think & Choose 🤔","Round 3 – ICT Detective 🕵️"];
+// tally drawing
+const tal=n=>{let h="";for(let g=0;g<Math.floor(n/5);g++)h+='<svg width="54" height="40" viewBox="0 0 54 40"><g stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M8 4v32M20 4v32M32 4v32M44 4v32M2 30L50 10"/></g></svg>';
+let r=n%5;if(r){h+='<svg width="'+(r*12+8)+'" height="40"><g stroke="currentColor" stroke-width="4" stroke-linecap="round">'+[...Array(r)].map((_,i)=>'<path d="M'+(8+i*12)+' 4v32"/>').join("")+'</g></svg>'}return h};
+const fruit='<table class="vis"><tr><td>🍎 Apple</td><td>'+tal(6)+'</td></tr><tr><td>🍌 Banana</td><td>'+tal(3)+'</td></tr><tr><td>🍊 Orange</td><td>'+tal(2)+'</td></tr></table>';
+const pets='<table class="vis"><tr><td>🐶 Dog</td><td>5</td></tr><tr><td>🐱 Cat</td><td>3</td></tr><tr><td>🐟 Fish</td><td>2</td></tr><tr><td>🐦 Bird</td><td>4</td></tr></table>';
+const Q=[
+{r:0,q:"What is DATA? 📋",o:["Facts we collect","A kind of fruit","A computer game"],a:0,e:"Data is facts we collect!"},
+{r:0,q:"How many tally marks are here?",v:'<div class="vis">'+tal(6)+'</div>',o:["5","6","7"],a:1,e:"One group of five plus one more = 6."},
+{r:0,q:"What is a SURVEY? 🗣️",o:["Asking friends a question and recording answers","Drawing a picture","Turning off the computer"],a:0,e:"A survey = ask a question and record the answers."},
+{r:0,q:"How do we draw the 5th tally mark?",o:["Cross the 4 lines","Draw a circle","Draw a 5th upright line"],a:0,e:"Draw 4 lines and cross the 5th."},
+{r:1,q:"Which fruit has the MOST votes?",v:fruit,o:["🍎 Apple","🍌 Banana","🍊 Orange"],a:0,e:"Apple has 6 – the most!"},
+{r:1,q:"Count the tallies. What is the TOTAL?",v:'<div class="vis">'+tal(7)+'</div>',o:["6","7","8"],a:1,e:"Count in fives: 5 + 2 = 7."},
+{r:1,q:"True or false: in our pictogram, one picture means one vote.",o:["True ✅","False ❌"],a:0,e:"Yes! One picture = one vote."},
+{r:1,q:"Which pet is the LEAST popular?",v:pets,o:["🐶 Dog","🐱 Cat","🐟 Fish","🐦 Bird"],a:2,e:"Fish has only 2 – the least."},
+{r:1,q:"What must a good chart have?",o:["A title and labels","Lots of colours only","No words at all"],a:0,e:"Every chart needs a title and labels."},
+{r:2,s:"Sam's table says dog = 5, but his pictogram shows 4 dogs. 🐶",q:"What is wrong?",o:["The pictogram does not match the table","The table is too small","Nothing is wrong"],a:0,e:"A pictogram must match the table: 1 picture per vote."},
+{r:2,s:"Mia made a bar chart of her pet survey. It has labels but no heading. 📊",q:"What should she add?",o:["A title","More sticky notes","A tally mark"],a:0,e:"A title tells us what the chart is about."},
+{r:2,s:"Leo asked 10 children, but his tally total is only 8. 🧐",q:"What should Leo do?",o:["Check and count his tallies again","Ignore it","Delete his survey"],a:0,e:"Totals must match the tallies – check again!"},
+{r:2,s:"Ava wants to make a chart on the computer from her table. 💻",q:"What does she do first?",o:["Type the table into the graph tool","Print a pictogram","Ask for a new survey"],a:0,e:"Type the table in, choose a bar chart, then add a title and labels."}
+];
+const app=document.getElementById("app");let name="",i=0,score=0,streak=0,best=0,locked=false;
+const sh=a=>a.map((x,k)=>[Math.random(),k]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+function start(){app.innerHTML='<div class="small">CAMBRIDGE PRIMARY COMPUTING</div><h1>Tally, Pictograms &amp; Charts</h1><div class="small">ICT CHALLENGE</div><div class="big">🍎📊🐶</div><p>Read, think, choose, and learn!</p><input id="n" placeholder="Type your name" maxlength="20"><br><button class="go" onclick="begin()">START GAME ▶</button>'}
+function begin(){name=document.getElementById("n").value.trim()||"Player";i=0;score=0;streak=0;best=0;show()}
+function show(){const q=Q[i];locked=false;const first=i===0||Q[i-1].r!==q.r;
+const ord=sh(q.o);
+app.innerHTML=(first?'<h2>'+R[q.r]+'</h2>':'')+'<div class="bar"><span>👤 '+name+'</span><span>Question '+(i+1)+'/'+Q.length+'</span><span>⭐ '+score+'</span></div><div class="prog"><i style="width:'+(i/Q.length*100)+'%"></i></div>'+(q.s?'<div class="story">'+q.s+'</div>':'')+'<h2>'+q.q+'</h2>'+(q.v||'')+'<div class="opts">'+ord.map(k=>'<button data-k="'+k+'" onclick="pick(this)">'+q.o[k]+'</button>').join("")+'</div><div class="fb" id="fb"></div><div id="nx"></div>'}
+function pick(b){if(locked)return;locked=true;const q=Q[i],k=+b.dataset.k,ok=k===q.a;
+document.querySelectorAll(".opts button").forEach(x=>{if(+x.dataset.k===q.a)x.classList.add("right")});
+if(ok){score+=10+(streak>=2?5:0);streak++;best=Math.max(best,streak)}else{b.classList.add("wrong");streak=0}
+document.getElementById("fb").innerHTML=(ok?"🎉 Great job! ":"🤔 Not quite. ")+q.e+(ok&&streak>=3?" 🔥 "+streak+" in a row!":"");
+document.getElementById("nx").innerHTML='<button class="go" onclick="next()">'+(i===Q.length-1?"SEE MY SCORE 🏆":"NEXT ▶")+'</button>'}
+function next(){i++;i<Q.length?show():end()}
+function end(){const max=Q.length*10,p=score/max;const st=p>.85?3:p>.55?2:1;
+app.innerHTML='<h1>Well done, '+name+'! 🏆</h1><div class="stars">'+"⭐".repeat(st)+"☆".repeat(3-st)+'</div><h2>Score: '+score+'</h2><p>'+(st===3?"ICT Super Star! You can collect and show data!":st===2?"Great work! Practise tally marks and charts a little more.":"Good try! Ask your teacher to help you practise tallies, tables and charts.")+'</p><p>Best streak: '+best+' 🔥</p><button class="go" onclick="start()">PLAY AGAIN 🔁</button>'}
+start();
+</script></body></html>
